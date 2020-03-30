@@ -2,5 +2,6 @@
 all = [
     'AAPL',
     'SPY',
-    'BA'
+    'BA',
+    "QQQ"
 ]
