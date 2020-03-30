@@ -64,12 +64,15 @@ class OnlyIfMonthIsLowerThanPrevious:
 
 strategy1 = OnlyIfMonthIsLowerThanPrevious()
 appl_stock = read_data('SPY')
-start_date = date(2018, 1, 1)
+start_date = date(2015, 1, 1)
 end_date = date(2020, 3, 10)
 
 result = strategy1.run(appl_stock, start_date, end_date, 0, 1000)
 
 print("\n")
 print(result)
+cost = result["cost"]
+value = result["shares"] * appl_stock.price_near_at(end_date).close()
 print("Cost: %s" % result["cost"])
-print("Value: %s" %(result["shares"] * appl_stock.price_near_at(end_date).close()))
+print("Value: %s" %(value))
+print("Profit: %s" %(value-cost))
