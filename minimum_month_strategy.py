@@ -45,10 +45,10 @@ class OnlyIfMonthIsLowerThanPrevious:
             current_amount -= month_expenses        
 
         return {
-                    "shares": total_shares,
-                    "cash": current_amount,
-                    "cost": total_cost,
-                    "avg_price_share": total_cost/total_shares
+                    "shares": round(total_shares,2),
+                    "cash": round(current_amount,2),
+                    "cost": round(total_cost,2),
+                    "avg_price_share": round(total_cost/total_shares,2)
         }    
 
                     

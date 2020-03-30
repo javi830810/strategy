@@ -3,7 +3,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from stock import read_data
 
-class EveryDay15:
+class OnlyIfMonthIsLowerThanPrevious:
 
     def should_execute(self, date):
         return False
@@ -18,21 +18,27 @@ class EveryDay15:
         total_cost = 0
         total_amount = initial_amount
 
-        current_date = date(start_date.year, start_date.month, 20)
-
         while current_date < end_date:
             month_expenses = 0
             month_shares = 0
 
             total_amount += increase_monthly    
             current_amount += increase_monthly
-            price_today = stock.price_near_at(current_date)
+            current_month = current_date
+            
+            while current_date <= self._last_day_of_month(current_month) and current_date <= end_date:
+                
+                prev_month = self._previous_month(current_date)
+                ma_50 = stock.ma_50(current_date)
+                price_today = stock.price_at(current_date)
 
-            month_shares = current_amount // price_today.close()
-            month_expenses = price_today.close() * month_shares
-
-            print("Buying at: %s, Amount: %s, Cost: %s" %(current_date, month_shares, month_expenses))
-            current_date = current_date + relativedelta(months=1)
+                if price_today and price_today.close() < ma_50:
+                    month_shares = current_amount // price_today.close()
+                    month_expenses = price_today.close() * month_shares
+                    print("Buying at: %s, Amount: %s, Cost: %s" %(current_date, month_shares, month_expenses))
+                    current_date = self._first_day_of_next_month(current_date)
+                    break
+                current_date = current_date + relativedelta(days=1)
 
             total_cost += month_expenses
             total_shares += month_shares
@@ -56,9 +62,9 @@ class EveryDay15:
         return _date - relativedelta(months=1)
 
 
-strategy1 = EveryDay15()
+strategy1 = OnlyIfMonthIsLowerThanPrevious()
 appl_stock = read_data('SPY')
-start_date = date(2019, 4, 1)
+start_date = date(2015, 1, 1)
 end_date = date(2020, 3, 10)
 
 result = strategy1.run(appl_stock, start_date, end_date, 0, 1000)
