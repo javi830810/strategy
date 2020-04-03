@@ -3,7 +3,7 @@ from datetime import date
 
 class Stock:
     
-    def __init__(self, daily_data=[]):
+    def __init__(self, symbol, daily_data=[]):
         def create_indexes():
             index = 0
             
@@ -45,8 +45,12 @@ class Stock:
 
             return daily_index, month_index, year_index
 
+        self.symbol = symbol
         self.daily_data = daily_data
         self.daily_index, self.month_index, self.year_index = create_indexes()
+
+    def symbol(self):
+        return self.symbol
 
     def year_min(self, year):
         result = None
@@ -83,6 +87,9 @@ class Stock:
         avg = 0
         i = 0
         while i < amout_of_days:
+            if not daily:
+                raise Exception("Not enough amount of days, increase date to the future")
+
             avg += daily.close()
             daily = daily.previous_day
             i += 1
@@ -143,7 +150,7 @@ class MonthlyStock:
 class DailyStock:
 
     def __init__(self, date, close):
-        self.date = datetime.strptime(date, '%Y-%m-%d')
+        self.date = date
         self.close_value = float(close)
         self.next_day = None
         self.previous_day = None
@@ -159,36 +166,6 @@ class DailyStock:
 
     def close(self):
         return self.close_value
-
-
-def read_data(symbol):
-    file1 = open("data/%s.csv" % symbol, 'r') 
-    lines = file1.readlines() 
-    
-    daily_data = []
-    
-    last_month = None
-
-    for line in lines[1:]:         
-        try:
-            data = line.split(",")
-            daily_data.append(DailyStock(data[0], data[5]))
-        except ValueError:
-            # print(line)
-            # print("Oops!  That was no valid number.  moving on...")
-            continue
-
-    return Stock(daily_data)
-    
-
-def min_monthly(symbol):
-    pass
-
-def days_to_invest(symbol, min_monthly_data):
-    pass
-
-def run(symbol, start_date):
-    pass
 
 
 # appl_stock = read_data('AAPL')

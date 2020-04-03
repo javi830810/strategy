@@ -1,7 +1,6 @@
 from datetime import datetime
 from datetime import date 
 from dateutil.relativedelta import relativedelta
-from stock import read_data
 
 class Strategy:
 
@@ -10,6 +9,25 @@ class Strategy:
     
     def amount(self, date):
         return 0
+
+    def buy_at(self, stock, current_date=date.today()):
+        prev_month = self._previous_month(current_date)
+        min_prev_month = stock.month_min(prev_month.year, prev_month.month)
+        price_today = stock.price_at(current_date)
+        if not price_today:
+            return {
+                "price_today": "MARKET_CLOSED",
+                "minimun_last_month": round(min_prev_month.close(),2),
+                "buy": "N/A",
+                "stock": stock.symbol
+            }
+        else:
+            return {
+                    "price_today": round(price_today.close(),2),
+                    "minimun_last_month": round(min_prev_month.close(),2),
+                    "buy": price_today and price_today.close() < min_prev_month.close(),
+                    "stock": stock.symbol
+                }
 
     def run(self, stock, start_date, end_date=None, initial_amount=0, increase_monthly=0, verbose=False):
         current_amount = initial_amount
@@ -49,13 +67,15 @@ class Strategy:
 
 
         value = total_shares*stock.price_near_at(end_date).close()
+        cost = round(total_cost,2)
 
         return {
                     "name": "Buy when Lower than Minimum last month",
                     "shares": round(total_shares,2),
                     "cash": round(current_amount,2),
-                    "cost": round(total_cost,2),
+                    "cost": cost,
                     "profit": round(value - total_cost,2),
+                    "profit(%)": round( (value - total_cost) *100/cost ,2),
                     "avg_price_share": round(total_cost/total_shares,2)
         }    
 

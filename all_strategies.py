@@ -5,11 +5,11 @@ import minimum_month_strategy
 import buy_lower_50_ma_strategy
 import buy_lower_200_ma_strategy
 import every_day_15_strategy
-from stock import read_data
 
-start_date = date(2015, 1, 1)
-end_date = date(2020, 3, 20)
-appl_stock = read_data('SPY')
+
+start_date = date(2001,2,1)
+end_date = date(2005, 1, 1 )
+appl_stock = read_data('QQQ')
 
 results = {}
 

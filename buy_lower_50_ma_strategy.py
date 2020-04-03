@@ -48,13 +48,15 @@ class Strategy:
             current_amount -= month_expenses        
 
         value = total_shares*stock.price_near_at(end_date).close()
+        cost = round(total_cost,2)
 
         return {
                     "name": "Buy Only when Lower than 50MA",
                     "shares": round(total_shares,2),
                     "cash": round(current_amount,2),
-                    "cost": round(total_cost,2),
+                    "cost": cost,
                     "profit": round(value - total_cost,2),
+                    "profit(%)": round( (value - total_cost) *100/cost ,2),
                     "avg_price_share": round(total_cost/total_shares,2)
         }    
 
