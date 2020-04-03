@@ -11,23 +11,17 @@ class Strategy:
         return 0
 
     def buy_at(self, stock, current_date=date.today()):
+        
         prev_month = self._previous_month(current_date)
-        min_prev_month = stock.month_min(prev_month.year, prev_month.month)
+        min_prev_month = stock.month_min(prev_month.year, prev_month.month) if stock.has_data_for_month(prev_month.year, prev_month.month) else None
         price_today = stock.price_at(current_date)
-        if not price_today:
-            return {
-                "price_today": "MARKET_CLOSED",
-                "minimun_last_month": round(min_prev_month.close(),2),
-                "buy": "N/A",
+        
+        return {
+                "price_today": round(price_today.close(),2) if price_today else "NO_DATA",
+                "minimun_last_month": round(min_prev_month.close(),2) if min_prev_month else "NO_DATA",
+                "buy": price_today.close() < min_prev_month.close() if min_prev_month and price_today else False,
                 "stock": stock.symbol
             }
-        else:
-            return {
-                    "price_today": round(price_today.close(),2),
-                    "minimun_last_month": round(min_prev_month.close(),2),
-                    "buy": price_today and price_today.close() < min_prev_month.close(),
-                    "stock": stock.symbol
-                }
 
     def run(self, stock, start_date, end_date=None, initial_amount=0, increase_monthly=0, verbose=False):
         current_amount = initial_amount

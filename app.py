@@ -24,11 +24,18 @@ app = Flask(__name__)
 mongo_client = MongoClient(mongo_host, mongo_port)
 
 def download_symbol(database, symbol):
-    url = "https://query1.finance.yahoo.com/v7/finance/download/%s?period1=953942400&period2=1585094400&interval=1d&events=history" % symbol
+    start_date = 953942400 #03/25/2000
+    end_date = int(datetime.utcnow().timestamp()) # today
+
+    url = "https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%s&period2=%s&interval=1d&events=history" % (symbol,start_date, end_date)
+
     r = requests.get(url, allow_redirects=False)
     decoded_content = r.content.decode('utf-8')
     cr = csv.reader(decoded_content.splitlines(), delimiter=',')
     index = 0
+
+    # Delete all records of the symbol in DB
+    database.delete_many({"symbol": symbol})
 
     for row in cr:
         if not index:
@@ -105,8 +112,8 @@ def should_buy(symbol):
     st = strategy.buy_at(stock, at_date)
     
     results = {}
-    results["date"] = at_date
-    results["result"] = st
+    results["_date"] = at_date
+    results.update(st)
 
     return jsonify(results)
 

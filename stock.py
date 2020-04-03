@@ -59,6 +59,9 @@ class Stock:
                 result = day
         return result
 
+    def has_data_for_month(self, year, month):
+        return self.month_index.get("%s_%s " %(year,month), None)
+
     def month_min(self, year, month):
         result = None
         for day in self._month(year, month):
