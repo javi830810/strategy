@@ -26,12 +26,9 @@ def job(database, symbol):
     results = {}
     results["_date"] = today
     results.update(st)
-
-    if results.get("buy", False):
-        r = requests.post("https://maker.ifttt.com/trigger/buyspy/with/key/lgZ2-PIbeA4ZzkBFem8M-vDbyjHc4rdsDgiojp_F-sn", data = {})
-        print(r.content)
-    else:
-        print("Do not buy")
+    print(results)
+    r = requests.post("https://maker.ifttt.com/trigger/buyspy/with/key/lgZ2-PIbeA4ZzkBFem8M-vDbyjHc4rdsDgiojp_F-sn", data = {"value1": str(results["price_today"]), "value2": str(results["minimun_last_month"]), "value3": "Buy" if results["buy"] else "DO NOT BUY"})
+    print(r.content)
 
 
 mongo_client = MongoClient(mongo_host, mongo_port)
