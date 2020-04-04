@@ -14,7 +14,7 @@ echo "$STRATEGY_PK" | base64 --decode > ~/.ssh/strategy.pk
 chmod 400 ~/.ssh/strategy.pk
 
 echo "Executing script on Server"
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$SERVER
+ssh -i ~/.ssh/strategy.pk -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $DEPLOY_USER@$SERVER
 ssh -i ~/.ssh/strategy.pk $DEPLOY_USER@$SERVER 'bash -s' < ./scripts/deploy.sh
 
 echo "Finishing deploy"
