@@ -14,10 +14,9 @@ ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" $DEPLOY_USER
 
 echo "Creating private Key"
 echo "$STRATEGY_PK" | base64 --decode > ~/.ssh/strategy.pk
-chmod 600 ~/.ssh/strategy.pk
-ssh-add ~/.ssh/strategy.pk
+chmod 400 ~/.ssh/strategy.pk
 
 echo "Executing script on Server"
-ssh -i ~/.ssh/strategy.pk $DEPLOY_USER@$SERVER 'bash -s' < /root/strategy/deploy.sh
+ssh -i ~/.ssh/strategy.pk $DEPLOY_USER@$SERVER 'bash -s' < ./scripts/deploy.sh
 
 echo "Finishing deploy"
