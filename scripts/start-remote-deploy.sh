@@ -10,7 +10,7 @@ mkdir -p ~/.ssh
 eval `ssh-agent -s`
 
 echo "Creating private Key"
-echo $STRATEGY_PK >> ~/.ssh/strategy.pk
+echo "$STRATEGY_PK" >> ~/.ssh/strategy.pk
 chmod 600 ~/.ssh/strategy.pk
 ssh-add ~/.ssh/strategy.pk
 
