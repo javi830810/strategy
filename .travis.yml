@@ -1,4 +1,4 @@
-language: generic
+language: minimal
 deploy:
     provider: script
     script: bash scripts/start-remote-deploy.sh
