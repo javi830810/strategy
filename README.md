@@ -1,5 +1,5 @@
 # Overview
-https://travis-ci.com/javi830810/strategy.svg?branch=master
+![](https://travis-ci.com/javi830810/strategy.svg?branch=master)
 
 Provides a baseline framework for backtest in Stocks
 
