@@ -9,18 +9,16 @@ Python 3x
 pip3 install -r requirements.txt
 ```
 
-## Setup
-
-Add desired symbols to "symbols.py" and download their data with
-
-```
-python3 historic.py
-```
-
-
 ## Run
-Implement whichever strategy you want, a test strategy has been implemented at `strategy.py`
 
 ```
-python3 strategy.py
+python3 -u app.py
+```
+
+
+## Usage
+
+```
+curl -X GET \
+  'http://localhost:5000/symbols/SPY/strategy/minimum_month/should_buy?date=2020-03-10'
 ```
