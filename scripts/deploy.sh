@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd /root/strategy
+
 git pull
 
 docker stop $(docker ps -aq)

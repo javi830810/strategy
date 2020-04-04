@@ -9,14 +9,15 @@ echo "Creating Login information"
 mkdir -p ~/.ssh
 eval `ssh-agent -s`
 
+echo "Disabling fingerprint check"
+ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" $DEPLOY_USER@$SERVER
+
 echo "Creating private Key"
 echo "$STRATEGY_PK" | base64 --decode > ~/.ssh/strategy.pk
 chmod 600 ~/.ssh/strategy.pk
 ssh-add ~/.ssh/strategy.pk
 
-echo "Copying sensitive variables to Server"
-scp -i ~/.ssh/strategy.pk ./scripts/deploy.sh $DEPLOY_USER@$SERVER:/root/strategy
-
+echo "Executing script on Server"
 ssh -i ~/.ssh/strategy.pk $DEPLOY_USER@$SERVER 'bash -s' < /root/strategy/deploy.sh
 
 echo "Finishing deploy"
