@@ -1,5 +1,8 @@
 from datetime import datetime
 from datetime import date
+from alpha_vantage.timeseries import TimeSeries
+
+
 
 class Stock:
     
@@ -46,8 +49,13 @@ class Stock:
             return daily_index, month_index, year_index
 
         self.symbol = symbol
+        
         self.daily_data = daily_data
-        self.daily_index, self.month_index, self.year_index = create_indexes()
+        if daily_data:
+            self.daily_index, self.month_index, self.year_index = create_indexes()
+        else:
+            # no daily data
+            pass
 
     def symbol(self):
         return self.symbol
@@ -126,6 +134,12 @@ class Stock:
                 closest_day = day
                 
         return closest_day
+
+    def price_now(self):
+        ts = TimeSeries(key="0JAYDGEZBH1QJAFR") #JSON
+        data, meta_data = ts.get_intraday(symbol=self.symbol)
+        dates = sorted(data.keys(), key=None, reverse=True)
+        return float(data[dates[0]]["4. close"])
 
     def price_at(self, date):
         return self.daily_index.get("%s_%s_%s" % (date.year, date.month, date.day), None)

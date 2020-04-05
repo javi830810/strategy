@@ -24,8 +24,6 @@ app = Flask(__name__)
 
 mongo_client = MongoClient(mongo_host, mongo_port)
 
-
-
 @app.route('/symbols/<symbol>/strategy/minimum_month')
 def minimum_month_strat(symbol):
     start_date = date.fromisoformat(request.args.get('start'))
@@ -47,14 +45,16 @@ def minimum_month_strat(symbol):
 
 @app.route('/symbols/<symbol>/strategy/minimum_month/should_buy')
 def should_buy(symbol):
-    at_date = date.fromisoformat(request.args.get('date'))
+    at_date = None
+    if request.args.get('date', None):
+        at_date = date.fromisoformat(request.args.get('date'))
 
     db = mongo_client["strategy"]
     stocks_collection = db["stocks"]
     stock = read_data(stocks_collection, symbol)
 
     strategy = minimum_month_strategy.Strategy()
-    st = strategy.buy_at(stock, at_date)
+    st = strategy.buy_at(stock, at_date if at_date else None)
     
     results = {}
     results["_date"] = at_date
