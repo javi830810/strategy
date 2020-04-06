@@ -1,8 +1,29 @@
 from datetime import datetime
 from datetime import date
 from alpha_vantage.timeseries import TimeSeries
+from alpha_vantage.alphavantage import AlphaVantage as av
+import requests
+import json
 
 
+class TimeSeriesExtended(TimeSeries):
+
+    def get_quote(self, symbol, outputsize='compact'):
+        """ Return Last known price for a given Quote
+        Keyword Arguments:
+            symbol:  the symbol for the equity we want to get its data
+            outputsize:  The size of the call, supported values are
+                'compact' and 'full; the first returns the last 100 points in the
+                data series, and 'full' returns the full-length intraday times
+                series, commonly above 1MB (default 'compact')
+        """
+        base_url = av._ALPHA_VANTAGE_API_URL
+
+        url = "{}function={}&symbol={}&apikey={}".format(base_url, "GLOBAL_QUOTE", symbol, self.key)
+        
+        response = requests.get(url)
+        quote_data = json.loads(response.text)
+        return quote_data["Global Quote"]
 
 class Stock:
     
@@ -136,10 +157,16 @@ class Stock:
         return closest_day
 
     def price_now(self):
-        ts = TimeSeries(key="0JAYDGEZBH1QJAFR") #JSON
-        data, meta_data = ts.get_intraday(symbol=self.symbol)
-        dates = sorted(data.keys(), key=None, reverse=True)
-        return float(data[dates[0]]["4. close"])
+        return DailyStock(date.today(), self.get_quote()["05. price"])
+
+    def get_quote(self):
+        ts = TimeSeriesExtended(key="0JAYDGEZBH1QJAFR") #JSON .... this should be in config somewhere
+        quote = ts.get_quote(self.symbol)
+
+        if not quote:
+            print("No quote found in alphavantage API")
+
+        return quote
 
     def price_at(self, date):
         return self.daily_index.get("%s_%s_%s" % (date.year, date.month, date.day), None)

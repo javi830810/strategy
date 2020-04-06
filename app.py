@@ -48,16 +48,16 @@ def should_buy(symbol):
     at_date = None
     if request.args.get('date', None):
         at_date = date.fromisoformat(request.args.get('date'))
-
+    
     db = mongo_client["strategy"]
     stocks_collection = db["stocks"]
     stock = read_data(stocks_collection, symbol)
 
     strategy = minimum_month_strategy.Strategy()
-    st = strategy.buy_at(stock, at_date if at_date else None)
+    st = strategy.buy_at(stock, at_date)
     
     results = {}
-    results["_date"] = at_date
+    results["_date"] = at_date if at_date else date.today()
     results.update(st)
 
     return jsonify(results)
@@ -72,7 +72,8 @@ def pull_symbol(symbol):
 @app.route('/symbols/<symbol>', methods = ['GET'])
 def get_symbol(symbol):
     """Return a friendly HTTP greeting."""
-    return jsonify(symbol)
+    st = Stock(symbol)
+    return st.get_quote()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
