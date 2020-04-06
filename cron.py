@@ -8,8 +8,6 @@ from pymongo import MongoClient
 from config import mongo_host, mongo_port
 from stock import DailyStock, Stock
 
-
-
 def job(database, symbol):
     today = date.today() # today
 
@@ -27,7 +25,7 @@ def job(database, symbol):
     results["_date"] = today
     results.update(st)
     print(results)
-    r = requests.post("https://maker.ifttt.com/trigger/buyspy/with/key/lgZ2-PIbeA4ZzkBFem8M-vDbyjHc4rdsDgiojp_F-sn", data = {"value1": str(results["price_today"]), "value2": str(results["minimun_last_month"]), "value3": "Buy" if results["buy"] else "DO NOT BUY"})
+    r = requests.post("https://maker.ifttt.com/trigger/buyspy/with/key/lgZ2-PIbeA4ZzkBFem8M-u933GuzypBiSCim4JUesVH", data = {"value1": str(results["price_today"]), "value2": str(results["minimun_last_month"]), "value3": "Buy" if results["buy"] else "DO NOT BUY"})
     print(r.content)
 
 
