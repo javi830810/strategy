@@ -33,6 +33,10 @@ def download_symbol(database, symbol):
             continue
         try:
             record_date = datetime.strptime(row[0], '%Y-%m-%d')
+            close = float(row[3]) # to check on the data
+            high = float(row[2])
+            _open = float(row[1])
+            
             stock_record = {
                 'symbol': symbol,
                 'date': record_date,
@@ -46,8 +50,8 @@ def download_symbol(database, symbol):
             database.insert_one(stock_record)
 
         except ValueError:
+            print("Oops!  That was no valid row.  moving on...")
             print(row)
-            # print("Oops!  That was no valid number.  moving on...")
             continue
 
 def read_data(stocks_collection, symbol):
